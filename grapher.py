@@ -50,14 +50,14 @@ pages = set(pages) - set(ignore)
 
 #creo un diccionario pagina:{hijos}
 
-nodos = {}
-
-for page in pages:
-    nodos[page] = Page(request, page).getPageLinks(request)
-
-with open('node.dump', 'w') as fh:
-    pickle.dump(nodos, fh)
-
+#nodos = {}
+#
+#for page in pages:
+#    nodos[page] = Page(request, page).getPageLinks(request)
+#
+#with open('node.dump', 'w') as fh:
+#    pickle.dump(nodos, fh)
+#
 
 #Iniciamos el Grafico
 graph = gv.AGraph(directed=True, splines="true", )
@@ -78,7 +78,7 @@ for page in pages:
     page = page.encode("utf8")
     color = random.randint(0, 0xffffff)    
     for link in links:
-        if link in pages and link != u'PyAr':
+        if link in pages and not (link == u'PyAr' or link.startswith('Category')):
             link = link.encode("utf8")
             graph.add_edge(page, link, color=int2hex_color(color))
     print '.',
