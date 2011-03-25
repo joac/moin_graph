@@ -20,12 +20,13 @@ pickle_dict = open_pickle()
 childs = []
 c = 0
 for i in pickle_dict:
-    if c == 60: break
+    if c == 9: break
     children = get_child(i, pickle_dict[i])
     childs.append(dict(
         name = unicode(i).encode("utf-8"),
         id = unicode(i).encode("utf-8"),
-        children = children))
+       # children = children
+        ))
     c += 1
 
 data = dict(name="PyAr", id="PyAr", children=childs)
