@@ -12,8 +12,6 @@ input, select {
 }
 
 table {
-    margin-top:-10px;
-    margin-left:7px;
 }
 
 h4 {
@@ -69,13 +67,11 @@ a {
 }
 
 .text {
-    margin: 7px;
 }
 
 #inner-details {
     font-size:0.8em;
     list-style:none;
-    margin:7px;
 }
 
 #log {
@@ -111,4 +107,5 @@ a {
     font-size:10px;
     font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
     padding:7px;
+    display:none;
 }

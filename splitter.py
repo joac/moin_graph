@@ -25,7 +25,7 @@ for i in pickle_dict:
     childs.append(dict(
         name = unicode(i).encode("utf-8"),
         id = unicode(i).encode("utf-8"),
-       # children = children
+        children = children
         ))
     c += 1
 
