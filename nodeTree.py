@@ -1,4 +1,5 @@
 #!-*- coding: utf8 -*-
+import pickle
 
 class NodeFactory(object):
     child_nodes = {}
@@ -8,7 +9,7 @@ class NodeFactory(object):
             self.child_nodes[name] = WikiNode(self, name)
         #FIXME esta feo asi!
         self.make_relations()
-        self.calc_weights()
+        #self.calc_weights()
 
     def make_tree(self):
         nodes = self.child_nodes.values()
@@ -22,9 +23,9 @@ class NodeFactory(object):
     def calc_weights(self):
         [x.update() for x in self.child_nodes.values()]
 
-    def make_recursive_tree(self):
+    def make_recursive_tree(self, node_name=u'Inicio'):
         
-         recursive_tree = self.child_nodes[u'Inicio'].get_dict()
+         recursive_tree = self.child_nodes[node_name].get_dict()
          return recursive_tree
         
 
@@ -57,24 +58,33 @@ class WikiNode(object):
             else:
                 self.weight += 1
     def get_dict(self):
-        childs = []
+        self.childs_dict = []
        
         if self.childs and not self.processed:
+            self.processed = True
             for child in self.childs:
-                self.processed = True
-                childs.append(child.get_dict())
+                self.childs_dict.append(child.get_dict())
+            
+
        
         node_name = self.name.encode("utf-8")
-        data_tree = dict(name=node_name, id=node_name, children=childs)
+        data_tree = dict(name=node_name, id=node_name, children=self.childs_dict)
         return data_tree
 
+def get_factory():
+    #FIXME node.dump no tiene que estar hardcodeado
+    fh = open('node.dump')
+    node_dict = pickle.load(fh)
+    fh.close()
+    node_manager = NodeFactory(node_dict)
+    return node_manager
+    
 
 
 if __name__ == "__main__":
     
-    import pickle
     import json
-
+    
     fh = open('node.dump')
     node_dict = pickle.load(fh)
     fh.close()
