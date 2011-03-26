@@ -43,6 +43,7 @@ class WikiNode(object):
         for child_name in child_list:
             if self.factory.child_nodes.get(child_name, None):
                 self.childs.append(self.factory.child_nodes[child_name])
+        
 
     
     def update(self):
@@ -66,9 +67,9 @@ class WikiNode(object):
                 self.childs_dict.append(child.get_dict())
             
 
-       
+        adjacents = [a.name.encode("utf-8") for a in self.childs] 
         node_name = self.name.encode("utf-8")
-        data_tree = dict(name=node_name, id=node_name, children=self.childs_dict)
+        data_tree = dict(name=node_name, id=node_name, children=self.childs_dict, adjacents=adjacents)
         return data_tree
 
 def get_factory():
