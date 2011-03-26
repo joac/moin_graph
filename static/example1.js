@@ -108,8 +108,6 @@
           nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
           textSupport = nativeCanvasSupport 
             && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-      //I'm setting this based on the fact that ExCanvas provides text support for IE
-      //and that as of today iPhone/iPad current text support is lame
       labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
       nativeTextSupport = labelType == 'Native';
       useGradients = nativeCanvasSupport;
@@ -126,15 +124,9 @@
         //init data
     var infovis = document.getElementById('infovis');
         var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
-        
-        //init Hypertree
         var ht = new $jit.Hypertree({
-          //id of the visualization container
           injectInto: 'infovis',
-          radius : "900",
-          //canvas width and height
-          //Change node and edge styles such as
-          //color, width and dimensions.
+          radius : "600",
           Node: {
               dim: 2,
               color: "#FFF"
@@ -146,36 +138,60 @@
           Navigation: {
             enable: true,
             panning: true,
-            zooming: 30
+            zooming: 50
          },
           onBeforeCompute: function(node){
-              Log.write("centering");
           },
-          //Attach event handlers and add text to the
-          //labels. This method is only triggered on label
-          //creation
           onCreateLabel: function(domElement, node){
               domElement.innerHTML = node.name;
-              $jit.util.addEvent(domElement, 'click', function () {
-                  ht.onClick(node.id);
+              jQuery(domElement).click(function(event) {
+                  event.stopPropagation()
+                  jQuery.getJSON("/node/" + node.name, function(response) {
+                      ht.op.sum(response, {
+                          type: "fade:con"
+                      });
+                      ht.onClick(node.id);
+                      curr_element = document.getElementById("header");
+                      curr_element.innerHTML = "<h1><a target='_blank' href='http://python.org.ar/pyar/" + node.name + "'>" + node.name + "</a></h1>"; 
+                  });
               });
           },
-          //Change node styles when labels are placed
-          //or moved.
           onPlaceLabel: function(domElement, node){
               var style = domElement.style;
-              style.display = '';
               style.cursor = 'pointer';
-              if (node._depth <= 1) {
+              if(node._depth == 0) {
+                  var element = jQuery(domElement)
+                  if(element.is(":visible")) {
+                      jQuery(domElement).animate({fontSize: "20px"}, 300)
+                  }
+              }
+              if (node._depth == 1) {
                   style.fontSize = "0.8em";
-                  style.color = "#ddd";
+                  var color = style.color;
+                  var zIndex = style.zIndex;
+                  jQuery(domElement).hover(function() {
+                      style.color = "#f00"
+                      style.backgroundColor = "#000"
+                      style.zIndex = 1000;
+                      jQuery(this).stop().animate({fontSize: "20px"}, 200)
+                  }, function() {
+                      style.color = color;
+                      style.background = "none";
+                      style.zIndex = zIndex;
+                      jQuery(this).stop().animate({fontSize: "0.8em"}, 200)
+                  });
 
-              } else if(node._depth > 2){
+              } else if (node._depth > 1) {
+                  var color = style.color;
                   style.fontSize = "0.7em";
-                  style.color = "#555";
+                  jQuery(domElement).hover(function() {
+                      style.color = "#f00"
+                      jQuery(this).stop().animate({fontSize: "15px"}, 200)
+                  }, function() {
+                      style.color = color;
+                      jQuery(this).stop().animate({fontSize: "0.7em"}, 200)
+                  });
 
-              } else {
-                  style.display = 'none';
               }
 
               var left = parseInt(style.left);
@@ -184,22 +200,6 @@
           },
           
           onAfterCompute: function(){
-              Log.write("done");
-              
-              //Build the right column relations list.
-              //This is done by collecting the information (stored in the data property) 
-              //for all the nodes adjacent to the centered node.
-              var node = ht.graph.getClosestNodeToOrigin("current");
-              var html = "<h4>" + node.name + "</h4><b>Connections:</b>";
-              html += "<ul>";
-              node.eachAdjacency(function(adj){
-                  var child = adj.nodeTo;
-                  if (child.data) {
-                      var rel = (child.data.band == node.name) ? child.data.relation : node.data.relation;
-                      html += "<li>" + child.name + " " + "<div class=\"relation\">(relation: " + rel + ")</div></li>";
-                  }
-              });
-              html += "</ul>";
           }
         });
         //load JSON data.

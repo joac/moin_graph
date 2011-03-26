@@ -1,0 +1,42 @@
+html, body {
+    margin:0;
+    padding:0;
+    font-family: "Lucida Grande", Verdana;
+    font-size: 0.9em;
+    text-align: center;
+    background-color:#F2F2F2;
+}
+
+
+a {
+    color:#23A4FF;
+    text-decoration:none;
+    background:#000;
+}
+#header {
+    position:absolute;
+    top:0;
+    z-index: 10;
+}
+#center-container {
+    height:100%;
+    width:100%;
+    position:absolute;
+    top:0;
+}
+
+#center-container {
+    background-color:#1a1a1a;
+    color:#ccc;
+}
+
+
+#infovis {
+    position:absolute;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    top:0;
+    left:0;
+}
+
